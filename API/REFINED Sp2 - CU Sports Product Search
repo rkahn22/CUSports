@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: Team 2 Sp2 - CU Sports Product Search
+servers:
+  - url: '{{url}}'
+paths:
+  "/product/search":
+    get:
+      tags:
+      - item
+      - search
+      summary: Finds product by keyword
+      description: |+
+        Find all products IDs that include passed keyword in their name or tags.
+
+        Examples include:
+        - Finding a product with a keyword (200 response)
+        ###### input: keyword as a string
+        ###### output: all products IDs that include the passed keyword
+
+        - Passing no keyword to return all products (200 response)
+        ###### input: no input
+        ###### output: all products IDs
+
+        - Invalid parameters (400 response)
+        ###### input: invalid parameter
+        ###### output: error message
+      operationId: findProduct
+      parameters:
+      - name: keyword
+        in: query
+        description: Keyword to search for in item name
+        required: false
+        schema:
+          type: string
+          default: ''
+        examples:
+          ValidNoKeyword:
+            value: ''
+          ValidKeyword:
+            value: shirt
+          InvalidKeyword:
+            value: 401236
+      responses:
+        '200':
+          description: Find shirt by keyword
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/ProductIndex'
+              examples:
+                ValidNoKeyword:
+                  value: {
+                    "size": 2,
+                    "index": [ 98460486, 76055880 ]
+                  }
+                ValidKeyword:
+                  value: {
+                    "size": 1,
+                    "index": [ 98460486 ]
+                  }
+        '400':
+          description: Invalid search parameters.
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                InvalidKeyword:
+                  value: {
+                    "code": 400,
+                    "message": "Invalid keyword. No items found."
+                  }
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                ServerError:
+                  value: {
+                    "code": 500,
+                    "message": "Internal Server Error"
+                  }
+components:
+  schemas:
+    ProductID:
+      type: integer
+      format: int64
+      minimum: 0
+      default: 0
+    ProductIndex:
+      type: object
+      required:
+        - size
+        - index
+      properties:
+        size:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+        index:
+          type: array
+          items:
+            "$ref": '#/components/schemas/ProductID'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
