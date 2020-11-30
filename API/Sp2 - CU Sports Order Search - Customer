@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: Team 2 Sp2 - CU Sports Order Search - Customer
+servers:
+  - url: '{{url}}'
+paths:
+  "/order/myorders":
+    get:
+      summary: List Customer Orders
+      operationId: listCustOrders
+      tags:
+        - order
+        - search
+        - customer
+      description: |+
+        Find all previous and current orders for authenticated users.
+
+        Examples include:
+        - Finding a list of order IDs (200 response)
+        ##### input: customer user token
+        ##### input: search start date
+        ##### input: search end date
+        ##### output: all open orders
+
+        - Finding no previous or current Order IDs (204 response)
+        ##### input: customer user token
+        ##### input: search start date
+        ##### input: search end date
+        ##### output: empty response
+
+        - Invalid Token (403 response)
+        ##### input: no or invalid customer user token
+        ##### input: search start date
+        ##### input: search end date
+        ##### output: Error message
+
+        - Invalid Date (400 response)
+        ##### input: customer user token
+        ##### input: invalid start date
+        ##### input: invalid end date
+        ##### output: Error message
+      parameters:
+        - name: token
+          in: header
+          description: Customer User Authentication Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+          examples:
+            ValidTokenOrders:
+              value: '{12345678-VALIDTOKEN-CUSTOMERUSR1}'
+            ValidTokenNoOrders:
+              value: '{12345678-VALIDTOKEN-CUSTOMERUSR2}'
+            InvalidToken:
+              value: ''
+            InvalidDateRange:
+              value: '{12345678-VALIDTOKEN-CUSTOMERUSR3}'
+            ValidDateRange:
+              value: '{12345678-VALIDTOKEN-CUSTOMERUSR4}'
+            ServerError:
+              value: '{87654321-VALIDTOKEN-CUSTOMERUSR5}'
+        - name: startDate
+          in: query
+          description: Start Date to search from in epoch time
+          required: false
+          schema:
+            "$ref": '#/components/schemas/DateTime'
+          examples:
+            ValidTokenOrders:
+              value: 0
+            ValidTokenNoOrders:
+              value: 0
+            InvalidToken:
+              value: 0
+            InvalidDateRange:
+              value: 1604599262
+            ValidDateRange:
+              value: 1601575263
+            ServerError:
+              value: 1601575264
+        - name: stopDate
+          in: query
+          description: Stop date to search to in epoch time
+          required: false
+          schema:
+            "$ref": '#/components/schemas/DateTime'
+          examples:
+            ValidTokenOrders:
+              value: 1604599261
+            ValidTokenNoOrders:
+              value: 1604599262
+            InvalidToken:
+              value: 1604599263
+            InvalidDateRange:
+              value: 0
+            ValidDateRange:
+              value: 1604599264
+            ServerError:
+              value: 1604599265  
+      responses:
+        '200':
+          description: Orders found
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+              examples:
+                ValidTokenOrders:
+                  value: {
+                    "size": 3,
+                    "index": [ 1045, 1046, 1047 ]
+                  }
+                ValidDateRange:
+                  value: {
+                    "size": 2,
+                    "index": [ 1046, 1047 ]
+                  }
+        '204':
+          description: No orders found
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+              examples:
+                ValidTokenNoOrders:
+                  value: {
+                    "size": 0,
+                    "index": []
+                  }
+        '403':
+          description: 403 Forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                InvalidToken:
+                  value: {
+                    "code": 403,
+                    "message": "You don't have access to this resource"
+                  }
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                InvalidDateRange:
+                  value: {
+                    "code": 400,
+                    "message": "Invalid Date Range entered"
+                  }
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                ServerError:
+                  value: {
+                    "code": 500,
+                    "message": "Internal Server Error"
+                  }
+components:
+  schemas:
+    OrderID:
+      type: integer
+      format: int64
+      minimum: 0
+      default: 0
+    OrderIndex:
+      type: object
+      required:
+        - size
+        - index
+      properties:
+        size:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+        index:
+          type: array
+          items:
+            "$ref": '#/components/schemas/OrderID'
+    Token:
+      type: string
+      default: ''
+    DateTime:
+      type: integer
+      format: int64
+      default: 0
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          default: 500
+        message:
+          type: string
+          default: "Internal Server Error"
