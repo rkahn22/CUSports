@@ -1,0 +1,426 @@
+{
+  "info": {
+    "_postman_id": "6ac3bb3f-6cc7-48a2-b975-ee135eca0b76",
+    "name": "Sp2 - Order Search - Warehouse",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List all open orders",
+      "_postman_id": "3a02ac80-de26-4bbd-ad8d-10ed33f4cf7a",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "(Required) Warehouse User Authentication Token",
+            "key": "token",
+            "value": "{12345678-VALIDTOKEN-WAREHOUSEUSER}"
+          }
+        ],
+        "url": "{{baseUrl}}/order/open",
+        "description": "Find all open (not-shipped) orders for authenticated users.\n\nExamples include:\n- Finding a list of order IDs to be shipped (200 response)\n##### input: warehouse user token\n##### output: all open orders\n\n- Finding no open order IDs to be shipped (204 response)\n##### input: warehouse user token\n##### output: empty response\n\n- Invalid Token (403 response)\n##### input: no or invalid warehouse user token\n##### output: Error message\n"
+      },
+      "response": [
+        {
+          "id": "955df7b2-ce8e-46ec-b639-e057f95a6bca",
+          "name": "No open orders",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": ""
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"size\": 0,\n \"index\": []\n}"
+        },
+        {
+          "id": "a5cb1ef4-05d5-4f78-a2b1-8872e9a3ef2c",
+          "name": "Unexpected error",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": ""
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "status": "Internal Server Error",
+          "code": 500,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 500,\n \"message\": \"Internal Server Error\"\n}"
+        },
+        {
+          "id": "c541a66e-1c88-426c-9f38-785571dd77f3",
+          "name": "Open orders found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-WAREHOUSEUSR1}"
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"size\": 3,\n \"index\": [\n  1045,\n  1046,\n  1047\n ]\n}"
+        },
+        {
+          "id": "201660f6-458b-476e-96c0-ae9b30ccf30f",
+          "name": "403 Forbidden",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": "''"
+              }
+            ],
+            "url": "{{baseUrl}}/order/open"
+          },
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:50:49 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=76154f9c41e3b5c0"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=17eb38a5f4c0d20f"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "118"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604699466"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"35-PlRRJcPtKfUVCWITlou4DGJwpLA\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 403,\n \"message\": \"You don't have access to this resource\"\n}"
+        },
+        {
+          "id": "459d0b38-4c6d-44d9-8a4c-691e8961a589",
+          "name": "Open orders found - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-WAREHOUSEUSR1}"
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:52:53 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=d2f8226946c24293"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=03fb1f36ef7cd9b2"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "117"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604699583"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"35-PlRRJcPtKfUVCWITlou4DGJwpLA\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"size\": 3,\n    \"index\": [\n        1045,\n        1046,\n        1047\n    ]\n}"
+        },
+        {
+          "id": "c9a7f6d8-94cd-4808-a909-dfb212a39c82",
+          "name": "No open orders - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-WAREHOUSEUSR2}"
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:55:25 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=30e3ec2a8e38b02f"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=f953b976906901a9"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "119"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604699785"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"35-PlRRJcPtKfUVCWITlou4DGJwpLA\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"size\": 0,\n \"index\": []\n}"
+        },
+        {
+          "id": "94091478-413a-4a2a-8389-8074fa5158cc",
+          "name": "403 Forbidden - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Warehouse User Authentication Token",
+                "key": "token",
+                "value": ""
+              }
+            ],
+            "url": "{{url}}/order/open"
+          },
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:56:59 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=30e3ec2a8e38b02f"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=f953b976906901a9"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "119"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604699785"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"35-PlRRJcPtKfUVCWITlou4DGJwpLA\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"code\": 403,\n    \"message\": \"You don't have access to this resource\"\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "id": "baseUrl",
+      "key": "baseUrl",
+      "value": "{{url}}",
+      "type": "string"
+    }
+  ]
+}
