@@ -1,0 +1,695 @@
+{
+  "info": {
+    "_postman_id": "d5d0b900-1daf-423b-9d36-be18b1ebe865",
+    "name": "Sp2 - Order Search - Customer",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Customer Orders",
+      "_postman_id": "3aee32e7-3c99-4cdd-bd0f-daa9ba73077b",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "description": "(Required) Customer User Authentication Token",
+            "key": "token",
+            "value": ""
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/order/myorders?startDate=0&stopDate=0",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "order",
+            "myorders"
+          ],
+          "query": [
+            {
+              "key": "startDate",
+              "value": "0",
+              "description": "Start Date to search from in epoch time"
+            },
+            {
+              "key": "stopDate",
+              "value": "0",
+              "description": "Stop date to search to in epoch time"
+            }
+          ]
+        },
+        "description": "Find all previous and current orders for authenticated users.\n\nExamples include:\n- Finding a list of order IDs (200 response)\n##### input: customer user token\n##### input: search start date\n##### input: search end date\n##### output: all open orders\n\n- Finding no previous or current Order IDs (204 response)\n##### input: customer user token\n##### input: search start date\n##### input: search end date\n##### output: empty response\n\n- Invalid Token (403 response)\n##### input: no or invalid customer user token\n##### input: search start date\n##### input: search end date\n##### output: Error message\n\n- Invalid Date (400 response)\n##### input: customer user token\n##### input: invalid start date\n##### input: invalid end date\n##### output: Error message\n"
+      },
+      "response": [
+        {
+          "id": "082ed64d-2285-40e3-bad2-de5fbec49d30",
+          "name": "Orders found - All Orders",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR1}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=0&stopDate=1604599261",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "0"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "1604599261"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"size\": 3,\n \"index\": [\n  1045,\n  1046,\n  1047\n ]\n}"
+        },
+        {
+          "id": "0d6ad2db-8a07-4120-b126-2ff5c639600d",
+          "name": "No orders found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR2}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=0&stopDate=1604599262",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "0"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "1604599262"
+                }
+              ]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"size\": 0,\n    \"index\": [],\n    \"message\": \"No orders found\"\n}"
+        },
+        {
+          "id": "7264509d-6c23-4bf6-8e4b-92b0df89f3c9",
+          "name": "Invalid Date Range",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR3}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=1604599262&stopDate=0",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "1604599262"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 400,\n \"message\": \"Invalid Date Range entered\"\n}"
+        },
+        {
+          "id": "96c2da4d-b0bb-4ad5-a681-211b40fad3c7",
+          "name": "Unexpected error",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{87654321-VALIDTOKEN-CUSTOMERUSR5}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=1601575264&stopDate=1604599265",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "1601575264"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "1604599265"
+                }
+              ]
+            }
+          },
+          "status": "Internal Server Error",
+          "code": 500,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 500,\n \"message\": \"Internal Server Error\"\n}"
+        },
+        {
+          "id": "fae7dd1f-aa2d-49c4-ac20-87da7c6b3e50",
+          "name": "Invalid Token",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "''"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=0&stopDate=1604599263",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "0"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "1604599263"
+                }
+              ]
+            }
+          },
+          "status": "Forbidden",
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 403,\n \"message\": \"You don't have access to this resource!\"\n}"
+        },
+        {
+          "id": "01c5d02c-b710-4fea-bf70-665e9086749c",
+          "name": "Orders Found - Valid Date",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR4}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=1601575263&stopDate=1604599264",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "1601575263",
+                  "description": "Start Date to search from in epoch time"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "1604599264",
+                  "description": "Stop date to search to in epoch time"
+                }
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"size\": 2,\n    \"index\": [\n        1046,\n        1047\n    ]\n}"
+        },
+        {
+          "id": "987fc552-d597-48ea-b06a-4013a14a4d83",
+          "name": "Orders found - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR1}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=0&stopDate=0",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "0",
+                  "description": "Start Date to search from in epoch time"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "0",
+                  "description": "Stop date to search to in epoch time"
+                }
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"size\": 3,\n    \"index\": [\n        1045,\n        1046,\n        1047\n    ]\n}"
+        },
+        {
+          "id": "ac363bcf-6d2a-4aba-96b1-63025ba5aeb2",
+          "name": "No orders found - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR2}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=0&stopDate=0",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "0",
+                  "description": "Start Date to search from in epoch time"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "0",
+                  "description": "Stop date to search to in epoch time"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:21:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=2dc8be4b054312d7"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=f04bf3010da7778a"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "118"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604697695"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"50-Y4aN0dQZPpK8wF9tEn1/bJx9e7I\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"size\": 1,\n    \"index\": []\n}"
+        },
+        {
+          "id": "67479ed8-5afa-49ba-8a44-37b616eb6239",
+          "name": "Invalid parameters - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR2}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=-1&stopDate=-1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "-1",
+                  "description": "Start Date to search from in epoch time"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "-1",
+                  "description": "Stop date to search to in epoch time"
+                }
+              ]
+            }
+          },
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:23:11 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=2dc8be4b054312d7"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=f04bf3010da7778a"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "118"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604697695"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"50-Y4aN0dQZPpK8wF9tEn1/bJx9e7I\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            },
+            {
+              "key": "\"\": size",
+              "value": "",
+              "description": "",
+              "type": "text"
+            },
+            {
+              "key": "\"\": index",
+              "value": "",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 400,\n \"message\": \"Invalid Date Range entered\"\n}"
+        },
+        {
+          "id": "a67e4a28-5e3e-4c23-9aa6-c4ff20e50c2c",
+          "name": "Unexpected error - MANUAL",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "description": "(Required) Customer User Authentication Token",
+                "key": "token",
+                "value": "{12345678-VALIDTOKEN-CUSTOMERUSR2}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/order/myorders?startDate=&stopDate=",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "order",
+                "myorders"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "",
+                  "description": "Start Date to search from in epoch time"
+                },
+                {
+                  "key": "stopDate",
+                  "value": "",
+                  "description": "Stop date to search to in epoch time"
+                }
+              ]
+            }
+          },
+          "code": 500,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Fri, 06 Nov 2020 21:28:02 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Server",
+              "value": "nginx"
+            },
+            {
+              "key": "x-srv-trace",
+              "value": "v=1;t=2dc8be4b054312d7"
+            },
+            {
+              "key": "x-srv-span",
+              "value": "v=1;s=f04bf3010da7778a"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "X-RateLimit-Limit",
+              "value": "120"
+            },
+            {
+              "key": "X-RateLimit-Remaining",
+              "value": "118"
+            },
+            {
+              "key": "X-RateLimit-Reset",
+              "value": "1604697695"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"50-Y4aN0dQZPpK8wF9tEn1/bJx9e7I\""
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 500,\n \"message\": \"Internal Server Error\"\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "id": "baseUrl",
+      "key": "baseUrl",
+      "value": "{{url}}",
+      "type": "string"
+    }
+  ]
+}
