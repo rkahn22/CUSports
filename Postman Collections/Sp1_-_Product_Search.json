@@ -1,0 +1,156 @@
+{
+  "info": {
+    "_postman_id": "663d146e-d9ce-47df-b0d2-e6e1a41b4d00",
+    "name": "Sp1 - Product Search",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Finds product by either keyword",
+      "_postman_id": "007478b9-e93d-45bb-aca6-2ac9d395bb76",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/product/search?keyword=",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "product",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "",
+              "description": "Keyword to search for in item name"
+            }
+          ]
+        },
+        "description": "Find all products that include passed keyword in their name or tags.\n\nExamples include:\n- Finding a product with a keyword (200 response)\n###### input: keyword as a string\n###### output: all products that include the passed keyword\n\n- Passing no keyword to return all products (200 response)\n###### input: no input\n###### output: all products\n\n- Invalid parameters (400 response)\n###### input: invalid parameter\n###### output: error message\n"
+      },
+      "response": [
+        {
+          "id": "59c67c57-d55a-4434-aa91-02b4c09d0923",
+          "name": "Invalid search parameters.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/product/search?keyword=",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "product",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 400,\n \"message\": \"Invalid keyword. No items found.\"\n}"
+        },
+        {
+          "id": "656de95f-fb59-48cd-a8eb-6d6a4b6702d8",
+          "name": "Unexpected error",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/product/search?keyword=",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "product",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Internal Server Error",
+          "code": 500,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n \"code\": 500,\n \"message\": \"Internal Server Error\"\n}"
+        },
+        {
+          "id": "c17be48a-32e5-4462-908f-cfa00d8f64d2",
+          "name": "Find shirt by keyword",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/product/search?keyword=",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "product",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "[\n {\n  \"id\": 98460486,\n  \"name\": \"Shirt 1\",\n  \"price\": 19.99,\n  \"tag\": \"Clemson Shirt\"\n },\n {\n  \"id\": 7605588,\n  \"name\": \"Hat 1\",\n  \"price\": 9.99,\n  \"tag\": \"Clemson Hat\"\n }\n]"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "id": "baseUrl",
+      "key": "baseUrl",
+      "value": "{{url}}",
+      "type": "string"
+    }
+  ]
+}
