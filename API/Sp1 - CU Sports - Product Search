@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: CU Sports Product Search
+servers:
+  - url: '{{url}}'
+paths:
+  "/product/search":
+    get:
+      tags:
+      - item
+      - search
+      summary: Finds product by either keyword
+      description: |+
+        Find all products that include passed keyword in their name or tags.
+
+        Examples include:
+        - Finding a product with a keyword (200 response)
+        ###### input: keyword as a string
+        ###### output: all products that include the passed keyword
+
+        - Passing no keyword to return all products (200 response)
+        ###### input: no input
+        ###### output: all products
+
+        - Invalid parameters (400 response)
+        ###### input: invalid parameter
+        ###### output: error message
+      operationId: findProduct
+      parameters:
+      - name: keyword
+        in: query
+        description: Keyword to search for in item name
+        required: false
+        schema:
+          type: string
+          default: ''
+        examples:
+          ValidNoKeywordResponse:
+            value: ''
+          ValidKeywordResponse:
+            value: shirt
+          InvalidKeyword:
+            value: 401236
+      responses:
+        '200':
+          description: Find shirt by keyword
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": '#/components/schemas/Product'
+              examples:
+                ValidNoKeywordResponse:
+                  value: [
+                      {
+                        "id": 98460486,
+                        "name": "Shirt 1",
+                        "price": 19.99,
+                        "tag": "Clemson Shirt"
+                      },
+                      {
+                        "id": 7605588,
+                        "name": "Hat 1",
+                        "price": 9.99,
+                        "tag": "Clemson Hat"
+                      }
+                    ]
+                ValidKeywordResponse:
+                  value: [
+                      {
+                        "id": 98460486,
+                        "name": "Shirt 1",
+                        "price": 19.99,
+                        "tag": "Clemson Shirt"
+                      }
+                    ]
+        '400':
+          description: Invalid search parameters.
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                InvalidKeyword:
+                  value: {
+                    "code": 400,
+                    "message": "Invalid keyword. No items found."
+                  }
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                ServerError:
+                  value: {
+                    "code": 500,
+                    "message": "Internal Server Error"
+                  }
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: integer
+          format: double
+        tag:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
