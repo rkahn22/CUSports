@@ -1,0 +1,897 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Team 2 Sp3 - CU Sports Search API
+servers:
+  - url: '{{url}}'
+paths:
+  "/search/productIndex":
+    get:
+      summary: Search for Products
+      operationId: readProductSearch
+      tags:
+      - product
+      - search
+      - read
+      description: |+
+        Find all products IDs that include passed keyword in their name or tags.
+
+        Examples include:
+        - Passing No Parameters to Return All Products (200 Response)
+        ###### output: all products IDs
+
+        - Finding Products With a Keyword (200 Response)
+        ###### input: keyword as a string
+        ###### output: all products IDs that include the passed keyword
+
+        - Finding Products With Category (200 Response)
+        ###### input: category as a string
+        ###### output: all products in category
+
+        - Finding Products in a Price Range (200 Response)
+        ###### input: start price
+        ###### input: stop price
+        ###### output: all products with price in range
+
+        - Finding Products in Category With Keyword (200 Response)
+        ###### input: keyword as a string
+        ###### input: category as a string
+        ###### output: all products in category with keyword
+
+        - Finding Products in Category by Price (200 Response)
+        ###### input: category as a string
+        ###### input: start price
+        ###### input: stop price
+        ###### output: all products in category in price range
+
+        - Finding Products by Keyword in Price Range (200 Response)
+        ###### input: keyword as a string
+        ###### input: start price
+        ###### input: stop price
+        ###### output: all products with keyword in price range
+
+        - Finding Products by Keyword in Category in Price Range (200 Response)
+        ###### input: keyword as a string
+        ###### input: category as a string
+        ###### input: start price
+        ###### input: stop price
+        ###### output: all products with keyword in category in price range
+
+        - Passing Keyword and Finding No Matching Products (204 Response)
+        ###### input: keyword as a string
+        ###### output: empty response
+
+        - Passing Category and Finding No Matching Products (204 Response)
+        ###### input: category as a string
+        ###### output: empty response
+
+        - Passing Price Range and Finding No Matching Products (204 Response)
+        ###### input: start price
+        ###### input: stop price
+        ###### output: empty response
+
+        - Invalid Price Range (400 Response)
+        ###### input: invalid start price
+        ###### input: invalid stop price
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: keyword
+          in: query
+          description: Keyword to search for in product name
+          required: false
+          schema:
+            "$ref": '#/components/schemas/ProductKeyword'
+        - name: category
+          in: query
+          description: Category of products to return
+          required: false
+          schema:
+            "$ref": '#/components/schmeas/ProductKeyword'
+        - name: startPrice
+          in: query
+          description: Start price of products
+          required: false
+          schema:
+            "$ref": '#/components/schemas/ProductPrice'
+        - name: stopPrice
+          in: query
+          description: Stop price of products
+          required: false
+          schema:
+            "$ref": '#/components/schemas/ProductPrice'
+      responses:
+        # For when the search returns objects
+        '200':
+          description: Products found
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/ProductIndex'
+        # For no returned objects
+        '204':
+          description: No products found
+        # For bad inputs, a present request body
+        '400':
+          description: Invalid search parameters.
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+    post:
+      summary: Add Product to Index
+      operationId: createProductSearch
+      tags:
+        - product
+        - search
+        - create
+      description: |+
+        Add a new product to the product search index to make it searchable.
+
+        Examples include:
+        - Adding a New Product to the Index (201 Response)
+        ###### input: administrator token
+        ###### input: product search object
+
+        - Trying to Add a Product with an Existing ID (400 Response)
+        ###### input: administrator token
+        ###### input: product search object
+        ###### output: error message
+
+        - Passing in a Bad Product Object (400 Response)
+        ###### input: administrator token
+        ###### input: invalid product search object
+        ###### output: error message
+
+        - Passing in a Bad Token (403 Response)
+        ###### input: invalid token
+        ###### input: product search object
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Administrator Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      requestBody:
+        description: A product index object to be added
+        content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/ProductSearchObj'
+      responses:
+        # Successful Add
+        '201':
+          description: Product added to Index
+        # ID exists/bad inputs
+        '400':
+          description: Invalid Input
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+    put:
+      summary: Update Product in Index
+      operationId: updateProductSearch
+      tags:
+        - product
+        - search
+        - update
+      description: |+
+        Update the product search index entry for a given id with the provided object.
+
+        Examples include:
+        - Successful Update of Product in Index (200 Response)
+        ###### input: administrator token
+        ###### input: product search object
+
+        - Invalid Product Search Object Entered (400 Response)
+        ###### input: administrator token
+        ###### input: product search object
+        ###### output: error message
+
+        - Invalid Authentication Token (403 Response)
+        ###### input: invalid token
+        ###### input: product search object
+        ###### output: error message
+
+        - Nonexistent Product to Update (404 Response)
+        ###### input: administrator token
+        ###### input: product search object
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Administrator Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      requestBody:
+        description: A product index object to replace an existing one
+        content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/ProductObj'
+      responses:
+        # Successful update
+        '200':
+          description: Product in index updated
+        # bad inputs
+        '400':
+          description: Invalid Input
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Object does not exist
+        '404':
+          description: Product does not exist
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+    delete:
+      summary: Delete a Product from Index
+      operationId: deleteProductSearch
+      tags:
+        - product
+        - search
+        - delete
+      description: |+
+        Remove a product from the index given its ID.
+
+        Examples include:
+        - Successful Removal of a Product Object (200 Response)
+        ###### input: administrator token
+        ###### input: product id
+
+        - Invalid Product ID Input (400 Response)
+        ###### input: administrator token
+        ###### input: invalid product id
+        ###### output: error message
+
+        - Invalid Authentication Token (403 Response)
+        ###### input: invalid token
+        ###### input: product id
+        ###### output: error message
+
+        - Nonexistent Product to Delete (404 Response)
+        ###### input: administrator token
+        ###### input: product ID
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Administrator Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+        - name: productID
+          in: query
+          description: Product ID to delete
+          required: true
+          schema:
+            "$ref": '#/components/schemas/ProductID'
+      responses:
+        # Successful deletion
+        '200':
+          description: Product deleted from index
+        # bad inputs
+        '400':
+          description: Invalid Input
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Object does not exist
+        '404':
+          description: Product does not exist
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+  "/search/productIndex/rebuild":
+    post:
+      summary: Force Rebuild of Underlying Index
+      operationId: rebuildProductSearch
+      tags:
+        - product
+        - search
+        - rebuild
+      description: |+
+        Trigger a rebuilding of underlying search index.
+
+        Examples Include:
+        - Triggering an Index Rebuild (202 Response)
+        ###### input: authentication token
+
+        - Invalid Token (403 Response)
+        ###### input: invalid authentication token
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Authentication token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      responses:
+        '202':
+          description: Rebuilding Index
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+  "/search/orderIndex":
+    get:
+      summary: Search for Orders
+      operationId: readOrderSearch
+      tags:
+        - order
+        - search
+        - read
+      description: |+
+        Find all orders in the specified date range and by the order status.
+
+        Examples include:
+        - Customer Finding All Previous Orders (200 Response)
+        ###### input: customer user token
+        ###### output: customer order IDs
+
+        - Customer Finding Previous Orders in a Range (200 Response)
+        ###### input: customer user token
+        ###### input: search start date
+        ###### input: search stop date
+        ###### output: customer order IDs for range
+
+        - Warehouse User Searching for Open Orders (200 Response)
+        ###### input: warehouse user token
+        ###### input: 'Open' status
+        ###### output: open order IDs
+
+        - Customer Finding No Previous or Current Order IDs (204 Response)
+        ###### input: customer user token
+        ###### output: empty response
+
+        - Customer Finding No Order IDs in Range (204 Response)
+        ###### input: customer user token
+        ###### input: search start date
+        ###### input: search stop date
+        ###### output: empty response
+
+        - Warehouse User Finding No Open Orders (204 Response)
+        ###### input: warehouse user token
+        ###### input: 'Open' status
+        ###### output: empty response
+
+        - Invalid Date Range (400 Response)
+        ###### input: customer user token
+        ###### input: invalid start date
+        ###### input: invalid end date
+        ###### output: error message
+
+        - Invalid Status (400 Response)
+        ###### input: warehouse user token
+        ###### input: invalid status
+        ###### output: error message
+
+        - Invalid Token (403 Response)
+        ###### input: no or invalid user token
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Authentication Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+        - name: startDate
+          in: query
+          description: Start Date to search from
+          required: false
+          schema:
+            "$ref": '#/components/schemas/Date'
+        - name: stopDate
+          in: query
+          description: Stop date to search to
+          required: false
+          schema:
+            "$ref": '#/components/schemas/Date'
+        - name: status
+          in: query
+          description: Status of order
+          required: false
+          schema:
+            "$ref": '#/components/schemas/OrderStatus'
+      responses:
+        '200':
+          description: Orders found
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+        '204':
+          description: No orders found
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+        # Bad Inputs
+        '400':
+          description: Invalid parameters
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+    post:
+      summary: Add Order to Index
+      operationId: createOrderSearch
+      tags:
+        - order
+        - search
+        - create
+      description: |+
+        Add a new order to the order search index to make it searchable.
+
+        Examples include:
+        - Adding a New Order to the Index (201 Response)
+        ###### input: administrator token
+        ###### input: order search object
+
+        - Trying to Add a Order with an Existing ID (400 Response)
+        ###### input: administrator token
+        ###### input: order search object
+        ###### output: error message
+
+        - Passing in a Bad Order Object (400 Response)
+        ###### input: administrator token
+        ###### input: invalid order search object
+        ###### output: error message
+
+        - Passing in a Bad Token (403 Response)
+        ###### input: invalid token
+        ###### input: order search object
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Authentication Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      requestBody:
+        description: An order index object to be added
+        content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/OrderSearchObj'
+      responses:
+        # Successful Add
+        '201':
+          description: Order added to Index
+        # ID exists/Bad Inputs
+        '400':
+          description: Invalid parameters
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+    put:
+      summary: Update Order in Index
+      operationId: updateOrderSearch
+      tags:
+        - order
+        - search
+        - update
+      description: |+
+        Update the order search index entry for a given id with the provided object.
+
+        Examples include:
+        - Successful Update of Order in Index (200 Response)
+        ###### input: administrator token
+        ###### input: order search object
+
+        - Invalid Order Search Object Entered (400 Response)
+        ###### input: administrator token
+        ###### input: order search object
+        ###### output: error message
+
+        - Invalid Authentication Token (403 Response)
+        ###### input: invalid token
+        ###### input: order search object
+        ###### output: error message
+
+        - Nonexistent Order to Update (404 Response)
+        ###### input: administrator token
+        ###### input: order search object
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Authentication Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      requestBody:
+        description: An order index object to be added
+        content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/OrderSearchObj'
+      responses:
+        # Successful update
+        '200':
+          description: Order in index updated
+        # bad inputs
+        '400':
+          description: Invalid Input
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Object does not exist
+        '404':
+          description: Order does not exist
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+    delete:
+      summary: Delete Order from Index
+      operationId: deleteOrderSearch
+      tags:
+        - order
+        - search
+        - delete
+      description: |+
+        Remove a order from the index given its ID.
+
+        Examples include:
+        - Successful Removal of a Order Object (200 Response)
+        ###### input: administrator token
+        ###### input: order id
+
+        - Invalid Order ID Input (400 Response)
+        ###### input: administrator token
+        ###### input: invalid order id
+        ###### output: error message
+
+        - Invalid Authentication Token (403 Response)
+        ###### input: invalid token
+        ###### input: order id
+        ###### output: error message
+
+        - Nonexistent Order to Delete (404 Response)
+        ###### input: administrator token
+        ###### input: order ID
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Administrator Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+        - name: orderID
+          in: query
+          description: Order ID to delete
+          required: true
+          schema:
+            "$ref": '#/components/schemas/OrderID'
+      responses:
+        # Successful deletion
+        '200':
+          description: Order deleted from index
+        # bad inputs
+        '400':
+          description: Invalid Input
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Bad token
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Object does not exist
+        '404':
+          description: Order does not exist
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+  "/search/orderIndex/rebuild":
+    post:
+      summary: Force Rebuild of Underlying Index
+      operationId: rebuildOrderSearch
+      tags:
+        - order
+        - search
+        - rebuild
+      description: |+
+        Trigger a rebuilding of underlying search index.
+
+        Examples Include:
+        - Triggering an Index Rebuild (202 Response)
+        ###### input: authentication token
+
+        - Invalid Token (403 Response)
+        ###### input: invalid authentication token
+        ###### output: error message
+
+        - Server Error (500 Response)
+        ###### output: error message
+      parameters:
+        - name: token
+          in: query
+          description: Authentication token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+      responses:
+        '202':
+          description: Rebuilding Index
+        '403':
+          description: 403 Forbidden
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+        # Default should be a 500 error, that the server is unable to handle the request
+        default:
+          description: Unexpected error
+          content:
+            'application/json':
+              schema:
+                "$ref": '#/components/schemas/Error'
+components:
+  schemas:
+    # Int64 Product ID number
+    ProductID:
+      type: integer
+      format: int64
+      minimum: 0
+      default: 0
+    # Keyword name or category search
+    ProductKeyword:
+      type: string
+      default: ''
+    # Pricing object
+    ProductPrice:
+      type: number
+      format: float
+      minimum: 0.00
+      default: 0.00
+    # Full Product Indexed (searchable) properties
+    ProductSearchObj:
+      type: object
+      required:
+        - id
+        - price
+      properties:
+        id:
+          "$ref": '#/components/schemas/ProductID'
+        name:
+          "$ref": '#/components/schemas/ProductKeyword'
+        price:
+          "$ref": '#/components/schemas/ProductPrice'
+        categories:
+          type: array
+          items:
+            "$ref": '#components/schemas/ProductKeyword'
+    # Index Object of Products
+    ProductIndex:
+      type: object
+      required:
+        - size
+        - index
+      properties:
+        size:
+          "$ref": '#/components/schemas/ArraySize'
+        index:
+          type: array
+          items:
+            "$ref": '#/components/schemas/ProductID'
+    # Int64 Order ID number
+    OrderID:
+      type: integer
+      format: int64
+      minimum: 0
+      default: 0
+    # Status enum: {'', 'Open', 'Complete', 'In-Transit'}
+    OrderStatus:
+      type: string
+      default:
+    # Index Object of Orders
+    OrderSearchObj:
+      type: object
+      required:
+        - id
+        - date
+        - status
+      properties:
+        id:
+          "$ref": '#/components/schemas/OrderID'
+        date:
+          "$ref": '#/components/schemas/Date'
+        status:
+          "$ref": '#/components/schemas/OrderStatus'
+    OrderIndex:
+      type: object
+      required:
+        - size
+        - index
+      properties:
+        size:
+          "$ref": '#/components/schemas/ArraySize'
+        index:
+          type: array
+          items:
+            "$ref": '#/components/schemas/OrderID'
+    # Base64-encoded token
+    # Use https://base64encode.org/ or command line
+    #
+    # ex: {12345678-TOKENVAL-CUSTUSRID} -> ezEyMzQ1Njc4LVRPS0VOVkFMLUNVU1RVU1JJRH0=
+    Token:
+      type: string
+      format: byte
+      default:
+    ArraySize:
+      type: integer
+      format: int32
+      minimum: 0
+      default: 0
+    # full-date objects from https://tools.ietf.org/html/rfc3339
+    Date:
+      type: string
+      format: date
+      default:
+    # Error object with HTTP status code and error message
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
