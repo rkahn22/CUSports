@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: Team 2 Sp2 - CU Sports Order Search - Warehouse
+servers:
+  - url: '{{url}}'
+paths:
+  "/order/open":
+    get:
+      summary: List all open orders
+      operationId: listOpenOrders
+      tags:
+        - order
+        - search
+        - warehouse
+      description: |+
+        Find all open (not-shipped) orders for authenticated users.
+
+        Examples include:
+        - Finding a list of order IDs to be shipped (200 response)
+        ##### input: warehouse user token
+        ##### output: all open orders
+
+        - Finding no open order IDs to be shipped (204 response)
+        ##### input: warehouse user token
+        ##### output: empty response
+
+        - Invalid Token (403 response)
+        ##### input: no or invalid warehouse user token
+        ##### output: Error message
+      parameters:
+        - name: token
+          in: header
+          description: Warehouse User Authentication Token
+          required: true
+          schema:
+            "$ref": '#/components/schemas/Token'
+          examples:
+            ValidTokenOrders:
+              value: '{12345678-VALIDTOKEN-WAREHOUSEUSR1}'
+            ValidTokenNoOrders:
+              value: '{12345678-VALIDTOKEN-WAREHOUSEUSR2}'
+            InvalidToken:
+              value: ''
+      responses:
+        '200':
+          description: Open orders found
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+              examples:
+                ValidTokenOrders:
+                  value: {
+                    "size": 3,
+                    "index": [ 1045, 1046, 1047 ]
+                  }
+        '204':
+          description: No open orders
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/OrderIndex'
+              examples:
+                ValidTokenNoOrders:
+                  value: {
+                    "size": 0,
+                    "index": [ ]
+                  }
+        '403':
+          description: 403 Forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                InvalidToken:
+                  value: {
+                    "code": 403,
+                    "message": "You don't have access to this resource"
+                  }
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                "$ref": '#/components/schemas/Error'
+              examples:
+                ServerError:
+                  value: {
+                    "code": 500,
+                    "message": "Internal Server Error"
+                  }
+components:
+  schemas:
+    OrderID:
+      type: integer
+      format: int64
+      minimum: 0
+      default: 0
+    OrderIndex:
+      type: object
+      required:
+        - size
+        - index
+      properties:
+        size:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+        index:
+          type: array
+          items:
+            "$ref": '#/components/schemas/OrderID'
+    Token:
+      type: string
+      default: ''
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          default: 500
+        message:
+          type: string
+          default: "Internal Server Error"
